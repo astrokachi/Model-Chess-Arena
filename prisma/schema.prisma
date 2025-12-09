@@ -1,14 +1,105 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Model {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  provider  String
+  rating    Int      @default(1200)
+  wins      Int      @default(0)
+  losses    Int      @default(0)
+  draws     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  whiteMatches  Match[]        @relation("WhiteModel")
+  blackMatches  Match[]        @relation("BlackModel")
+  agentMemories AgentMemory[]
+
+  @@index([rating])
+  @@index([provider])
+}
+
+model Match {
+  id           String    @id @default(cuid())
+  whiteModelId String
+  blackModelId String
+  status       String    @default("pending")
+  result       String?
+  pgn          String?   @db.Text
+  initialFen   String    @default("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+  finalFen     String?
+  createdAt    DateTime  @default(now())
+  startedAt    DateTime?
+  completedAt  DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  whiteModel    Model         @relation("WhiteModel", fields: [whiteModelId], references: [id])
+  blackModel    Model         @relation("BlackModel", fields: [blackModelId], references: [id])
+  moves         Move[]
+  agentMemories AgentMemory[]
+
+  @@index([status])
+  @@index([whiteModelId])
+  @@index([blackModelId])
+  @@index([createdAt])
+}
+
+model Move {
+  id              String    @id @default(cuid())
+  matchId         String
+  moveNumber      Int
+  side            String
+  san             String
+  uci             String
+  fenBefore       String
+  fenAfter        String
+  capturedPiece   String?
+  isCheck         Boolean   @default(false)
+  isCheckmate     Boolean   @default(false)
+  isCastling      Boolean   @default(false)
+  isEnPassant     Boolean   @default(false)
+  isPromotion     Boolean   @default(false)
+  promotionPiece  String?
+  timeSpentMs     Int?
+  createdAt       DateTime  @default(now())
+
+  match         Match         @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  agentMemories AgentMemory[]
+
+  @@unique([matchId, moveNumber, side])
+  @@index([matchId])
+}
+
+model AgentMemory {
+  id                      String   @id @default(cuid())
+  modelId                 String
+  matchId                 String
+  moveId                  String?
+  step                    Int
+  diagnosis               String?  @db.Text
+  planJson                String?  @db.Text
+  action                  String?  @db.Text
+  result                  String?  @db.Text
+  thoughtSummary          String?  @db.Text
+  boardStateAnalysis      String?  @db.Text
+  alternativesConsidered  String?  @db.Text
+  confidenceScore         Float?
+  createdAt               DateTime @default(now())
+
+  model Model  @relation(fields: [modelId], references: [id])
+  match Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  move  Move?  @relation(fields: [moveId], references: [id])
+
+  @@index([modelId])
+  @@index([matchId])
+  @@index([moveId])
+  @@index([step])
 }
