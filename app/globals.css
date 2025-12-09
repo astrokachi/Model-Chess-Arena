@@ -24,3 +24,261 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.game-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.game-layout {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  max-width: 1400px;
+}
+
+.chess-board {
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  width: 640px;
+  height: 640px;
+  border: 3px solid #333;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.board-square {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.board-square.light {
+  background-color: #f0d9b5;
+}
+
+.board-square.dark {
+  background-color: #b58863;
+}
+
+.board-square.selected {
+  background-color: #9bc53d !important;
+  box-shadow: inset 0 0 0 3px #7aa92e;
+}
+
+.board-square.valid-move {
+  background-color: rgba(155, 197, 61, 0.3);
+}
+
+.board-square.last-move {
+  background-color: rgba(205, 210, 106, 0.5) !important;
+}
+
+.board-square.check {
+  background-color: #ff6b6b !important;
+  animation: pulse-check 1s ease-in-out infinite;
+}
+
+@keyframes pulse-check {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.board-square:hover {
+  filter: brightness(1.1);
+}
+
+.move-indicator {
+  width: 25%;
+  height: 25%;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+}
+
+.capture-indicator {
+  position: absolute;
+  inset: 4px;
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.chess-piece {
+  font-size: 4rem;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease;
+}
+
+.chess-piece.white-piece {
+  color: #ffffff;
+  text-shadow:
+    1px 1px 2px rgba(0, 0, 0, 0.8),
+    -1px -1px 2px rgba(0, 0, 0, 0.8),
+    1px -1px 2px rgba(0, 0, 0, 0.8),
+    -1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.chess-piece.black-piece {
+  color: #000000;
+  text-shadow:
+    1px 1px 1px rgba(255, 255, 255, 0.3),
+    -1px -1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.chess-piece:hover {
+  transform: scale(1.1);
+}
+
+.chess-piece.selected {
+  transform: scale(1.15);
+}
+
+.game-controls {
+  min-width: 350px;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.status-display h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.status-display p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.move-history {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.move-history h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.moves-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.move-item {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.move-number {
+  font-weight: 600;
+  color: #666;
+}
+
+.move-san {
+  font-family: monospace;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.control-buttons button {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reset {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-reset:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-export {
+  background: #10b981;
+  color: white;
+}
+
+.btn-export:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  .move-history {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .move-item {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .status-display p {
+    color: #aaa;
+  }
+
+  .move-number {
+    color: #999;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chess-board {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+  }
+
+  .game-controls {
+    width: 100%;
+    max-width: 600px;
+  }
+}
