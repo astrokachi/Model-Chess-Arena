@@ -1,7 +1,13 @@
-import Image from "next/image";
+import { ChessBoard } from "@/components/chess/chess-board";
+import { GameControls } from "@/components/chess/game-controls";
 
 export default function Home() {
   return (
-    <div>Hello world</div>
+    <div className="game-container">
+      <div className="game-layout">
+        <ChessBoard />
+        <GameControls />
+      </div>
+    </div>
   );
 }
